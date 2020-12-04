@@ -5,11 +5,11 @@
 #include <fstream>
 #include <sstream>
 
-void read(std::vector<std::string> &passports)
+void read(std::vector<std::string> &string_passports)
 {
     std::ifstream file("input.txt");
 
-    std::string passport;
+    std::string string_passport;
 
     while (!file.eof())
     {
@@ -19,14 +19,16 @@ void read(std::vector<std::string> &passports)
 
         if (line == "")
         {
-            passports.push_back(passport);
-            passport = "";
+            string_passports.push_back(string_passport);
+            string_passport = "";
         }
         else
         {
-            passport += " " + line;
+            string_passport += " " + line;
         }
     }
+
+    string_passports.push_back(string_passport);
 
     file.close();
 }
@@ -40,8 +42,8 @@ std::vector<std::string> split(std::string string_passport)
     while (!ss.eof())
     {
         std::string temporary_string;
-        ss >> temporary_string;                           // string
-        temporary_string = temporary_string.substr(0, 3); // 3 letters
+        ss >> temporary_string; // string
+        //temporary_string = temporary_string.substr(0, 3); // 3 letters
 
         vector_passport.push_back(temporary_string);
     }
@@ -53,45 +55,83 @@ std::vector<std::string> split(std::string string_passport)
 
 // WIP
 
-int main()
+bool valid(std::string string_passport)
 {
-    std::unordered_set<std::string> expected_fields = {"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"};
-    std::string optional = "cid";
+    std::vector<std::string> const vector_passport = split(string_passport);
 
-    std::vector<std::string> passports;
+    int success = 0;
 
-    read(passports);
+    /*
+    byr - four digits 1920-2002
+    iyr - four digits 2010-2020
+    eyr - four digits 2020-2030
+    hgt - number than cm (150-193) or in (59-76)
+    hcl - "#" + six characters 0-9 or a-f
+    ecl - {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}
+    pid - nine-digit including leading zeroes
 
-    for (auto e : passports)
+    required fields and valid values
+
+    how many passports are valid?
+    */
+
+    for (auto field : vector_passport)
     {
-        std::vector<std::string> const passport = split(e);
+        std::string const field_name = field.substr(0, 3);
 
-        int matching_fields = 0;
+        std::cout << field_name << '\n';
 
-        for (auto i : passport)
+        switch (field_name)
         {
-            if (expected_fields.find(i) != expected_fields.end())
-            {
-                matching_fields++;
-            }
-            else
-            {
-                if (i != optional)
-                {
-                    std::cout << "invalid" << '\n';
-                }
-            }
-        }
+        case "byr":
+            //
+            break;
 
-        if (matching_fields == expected_fields.size())
-        {
-            std::cout << "valid" << '\n';
-        }
-        else
-        {
-            std::cout << "invalid" << '\n';
+        case "iyr":
+            /* code */
+            break;
+
+        case "eyr":
+            /* code */
+            break;
+
+        case "hgt":
+            /* code */
+            break;
+
+        case "hcl":
+            /* code */
+            break;
+
+        case "ecl":
+            /* code */
+            break;
+
+        case "pid":
+            /* code */
+            break;
+
+        default:
+            break;
         }
     }
+
+    return success == 7;
+}
+
+int main()
+{
+    std::vector<std::string> passports;
+
+    read(passports); // error prone
+
+    int valid_passports = 0;
+
+    for (auto field : passports)
+        if (valid(field))
+            valid_passports++;
+
+    std::cout << valid_passports << '\n';
 
     return 0;
 }
