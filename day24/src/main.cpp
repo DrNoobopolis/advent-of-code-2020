@@ -13,7 +13,7 @@ int main()
 
     int count = 0;
 
-    //
+    // I added a comment
 
     for (auto &e : tiles)
     {
