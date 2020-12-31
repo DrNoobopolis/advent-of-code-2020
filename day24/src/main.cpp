@@ -1,6 +1,11 @@
 
 #include "day24.hpp"
 
+int part(int i)
+{
+    //
+}
+
 int main()
 {
     auto const print = [](auto const &e) { std::cout << e << '\n'; };
