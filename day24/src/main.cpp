@@ -1,40 +1,43 @@
 
 #include "day24.hpp"
 
-int part(int i)
+#include <set>
+
+auto neutral_insert(std::set<location> &collection, location const &element) -> void
 {
-    //
+    auto const element_location = collection.find(element);
+    bool const already_exists = element_location != collection.end();
+
+    if (already_exists)
+    {
+        collection.erase(element_location);
+    }
+    else
+    {
+        collection.insert(element);
+    }
 }
 
 int main()
 {
     auto const print = [](auto const &e) { std::cout << e << '\n'; };
-    auto const print_collection = [print](auto const &e) { std::ranges::for_each(e, print); };
+    auto const print_collection = [print](auto const &e) { std::for_each(e.begin(), e.end(), print); };
 
-    std::vector<location> tiles;
+    std::set<location> tiles;
 
     for (auto const &line : read("input.txt"))
-        tiles.push_back(string_to_directions(line));
+        neutral_insert(tiles, string_to_directions(line));
 
-    int count = 0;
+    // for (location const &e : tiles)
+    // std::cout << e.string() << '\n';
 
-    // I added a comment
-
-    for (auto &e : tiles)
-    {
-        auto const occurrences = std::count(tiles.begin(), tiles.end(), e);
-
-        e.print();
-
-        if (occurrences > 1)
-        {
-            //count++;
-        }
-    }
-
-    std::cout << count << '\n';
-
-    // 353 was wrong
+    std::cout << tiles.size() << '\n';
 
     return 0;
 }
+
+// should use .h rather than .hpp
+
+// go to definition using Ctrl + t
+
+// commit button vscode

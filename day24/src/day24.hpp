@@ -12,6 +12,8 @@
 
 #include "../include/expected.hpp"
 
+// https://www.redblobgames.com/grids/hexagons/
+
 auto read(std::string const &filename) -> std::vector<std::string>
 {
     std::ifstream file(filename);
@@ -29,30 +31,45 @@ auto read(std::string const &filename) -> std::vector<std::string>
 
 struct location
 {
-    int NE = 0; // SW
-    int E = 0;  // W
-    int SE = 0; // NW
+    // axial coordinates
 
-    auto print() -> void
+    int r = 0;
+    int q = 0;
+
+    auto string() const -> std::string
     {
-        std::cout << "NE:" << this->NE << " E:" << this->E << " SE:" << this->SE << '\n';
+        std::stringstream ss;
+
+        ss << "r:" << this->r << " q:" << this->q;
+
+        return ss.str();
     }
 
-    auto operator<(location const &l) -> bool
+    auto operator<(location const &r) const -> bool
     {
-        return (this->NE < l.NE) && (this->E < l.E) && (this->SE < l.SE);
+        if (this->r != r.r)
+            return this->r < r.r;
+
+        return (this->q < r.q);
     }
 
-    auto operator==(location const &l) -> bool
+    auto operator==(location const &r) const -> bool
     {
-        return (this->NE == l.NE) && (this->E == l.E) && (this->SE == l.SE);
+        return (this->r == r.r) && (this->q == r.q);
     }
 
     location(std::vector<std::string> const &directions)
     {
-        this->NE = std::ranges::count(directions, "ne") - std::ranges::count(directions, "sw");
-        this->E = std::ranges::count(directions, "e") - std::ranges::count(directions, "w");
-        this->SE = std::ranges::count(directions, "se") - std::ranges::count(directions, "nw");
+        int const NE = std::count(directions.begin(), directions.end(), "ne") - std::count(directions.begin(), directions.end(), "sw");
+        int const E = std::count(directions.begin(), directions.end(), "e") - std::count(directions.begin(), directions.end(), "w");
+        int const SE = std::count(directions.begin(), directions.end(), "se") - std::count(directions.begin(), directions.end(), "nw");
+
+        this->r += E;
+
+        this->r += NE;
+        this->q -= NE;
+
+        this->q += SE;
     }
 };
 
@@ -71,7 +88,7 @@ auto string_to_directions(std::string const &line) -> std::vector<std::string>
     {
         direction += character;
 
-        if (std::ranges::find(expected, direction) != expected.end())
+        if (std::find(expected.begin(), expected.end(), direction) != expected.end())
         {
             directions.push_back(direction);
             direction = "";
@@ -83,45 +100,3 @@ auto string_to_directions(std::string const &line) -> std::vector<std::string>
     return directions;
 }
 // ignores space characters e.g. ' '
-
-/*
-            o
-       NW       NE
-    o               o
-    
-    W               E
-
-    o               o
-       SW       SE
-            o
-    
-            o
-        ooooooooo
-    ooooooooooooooooo
-    ooooooooooooooooo
-    ooooooooooooooooo
-    ooooooooooooooooo
-    ooooooooooooooooo
-        ooooooooo
-            o
-    
-            o
-        o       o
-    o               o
-    o               o
-    o               o
-    o               o
-    o               o
-        o       o
-            o
-
-            o
-                 
-    o               o
-                     
-                     
-                     
-    o               o
-                 
-            o
-*/
